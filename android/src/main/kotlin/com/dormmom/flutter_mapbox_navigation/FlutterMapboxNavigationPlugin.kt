@@ -13,7 +13,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
-class FlutterMapboxNavigationPlugin: FlutterPlugin, ActivityAware
+class FlutterMapboxNavigationPlugin(act: Activity): FlutterPlugin, ActivityAware
 {
     
     private var _methodChannel: MethodChannel? = null
@@ -26,7 +26,7 @@ class FlutterMapboxNavigationPlugin: FlutterPlugin, ActivityAware
         @JvmStatic
         fun registerWith(registrar: Registrar) {
 
-            val instance = FlutterMapboxNavigationPlugin()
+            val instance = FlutterMapboxNavigationPlugin(registrar.activity())
             instance.onAttachedToEngine(registrar.activeContext(), registrar.messenger())
 
         }
@@ -54,6 +54,9 @@ class FlutterMapboxNavigationPlugin: FlutterPlugin, ActivityAware
         _context = binding
         _methodChannel = MethodChannel(messenger, "flutter_mapbox_navigation")
         _eventChannel = EventChannel(messenger, "flutter_mapbox_navigation/arrival")
+         val handler = FlutterMapboxNavigation(_context, _activity)
+        _eventChannel!!.setStreamHandler(handler)
+        _methodChannel!!.setMethodCallHandler(handler)
 
     }
 
